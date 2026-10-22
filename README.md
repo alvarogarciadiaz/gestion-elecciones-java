@@ -1,6 +1,6 @@
 # Elecciones al Parlamento de Andalucía · Práctica en Java
 
-Programa en Java que modela un sistema de elecciones: partidos, candidaturas, provincias y mesas electorales. Es una práctica de clase del Grado en Ingeniería Informática (Universidad Pablo de Olavide).
+Programa en Java que modela un sistema de elecciones: partidos, candidaturas, provincias y mesas electorales. Es un proyecto del Grado en Ingeniería Informática (Universidad Pablo de Olavide).
 
 🌐 **Pruébalo en el navegador:** https://alvarogarciadiaz.github.io/elecciones.html
 
