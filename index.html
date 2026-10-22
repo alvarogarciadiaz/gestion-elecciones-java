@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Portfolio de Álvaro García Díaz, estudiante de Ingeniería Informática apasionado del hardware y la inteligencia artificial.">
+<title>Álvaro García Díaz · Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fafafb;--surface:#ffffff;--text:#0f172a;--muted:#5b6478;--accent:#2563eb;--accent2:#06b6d4;--accent-text:#ffffff;--border:#e5e7ee;--glow:rgba(37,99,235,.12);color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#0b0f1a;--surface:#131a2b;--text:#e8ecf6;--muted:#98a2b8;--accent:#60a5fa;--accent2:#22d3ee;--accent-text:#0b0f1a;--border:#222c45;--glow:rgba(96,165,250,.14);color-scheme:dark}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 "Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+header{position:sticky;top:0;z-index:19;background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+nav{max-width:1000px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 24px;flex-wrap:wrap}
+.logo{font-weight:700;letter-spacing:-.02em;text-decoration:none;color:var(--text)}
+.logo span{color:var(--accent)}
+nav ul{display:flex;gap:22px;list-style:none;margin:0;padding:0;flex-wrap:wrap}
+nav ul a{color:var(--muted);text-decoration:none;font-size:.92rem;font-weight:500;transition:color .2s}
+nav ul a:hover{color:var(--accent)}
+section{max-width:1000px;margin:auto;padding:84px 24px}
+.eyebrow{display:inline-block;color:var(--accent);font-weight:600;font-size:.82rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px}
+h1{font-size:clamp(2.3rem,7vw,4rem);line-height:1.08;letter-spacing:-.03em;margin:.1em 0 .3em}
+h1 em{font-style:normal;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-size:clamp(1.6rem,4vw,2.1rem);letter-spacing:-.02em;margin:0 0 30px}
+.hero{display:flex;gap:48px;align-items:center;flex-wrap:wrap;padding-top:96px;position:relative}
+.hero::before{content:"";position:absolute;inset:0 -10% auto auto;width:420px;height:420px;background:radial-gradient(circle,var(--glow),transparent 70%);z-index:-1;pointer-events:none}
+.hero>div:first-child{flex:1 1 340px}
+.lead{color:var(--muted);font-size:1.15rem;max-width:50ch;margin:0 0 28px}
+.avatar{width:210px;height:210px;border-radius:28px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;font-size:3.6rem;font-weight:700;color:var(--accent-text);box-shadow:0 20px 50px var(--glow);transform:rotate(-4deg)}
+.btn{display:inline-block;padding:12px 24px;border-radius:10px;text-decoration:none;font-weight:600;font-size:.95rem;margin:0 10px 10px 0;border:1px solid var(--border);color:var(--text);background:var(--surface);transition:transform .15s,border-color .2s}
+.btn:hover{transform:translateY(-2px);border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--accent-text);border-color:var(--accent)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;transition:transform .2s,border-color .2s}
+.card:hover{transform:translateY(-3px);border-color:var(--accent)}
+.card h3{margin:0 0 8px;font-size:1.08rem;letter-spacing:-.01em}
+.card p{margin:0;color:var(--muted);font-size:.95rem}
+.meta{color:var(--accent);font-size:.82rem;font-weight:600;margin-bottom:8px}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.actions .btn{margin:0}.btn.sm{padding:8px 16px;font-size:.88rem}
+.card.ghost{border-style:dashed;background:transparent;display:flex;flex-direction:column;justify-content:center}
+.card.ghost:hover{transform:none;border-color:var(--border)}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.tag{font-size:.78rem;font-weight:600;color:var(--accent);background:var(--glow);padding:3px 10px;border-radius:999px}
+.group{margin-bottom:28px}
+.group h3{font-size:.9rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin:0 0 12px}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin:0;padding:0;list-style:none}
+.chips li{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 16px 8px 10px;font-size:.95rem;font-weight:500}
+.chips img,.chips svg{width:28px;height:28px;flex:none}
+.chips svg{color:#0091bd}
+@media (prefers-color-scheme:dark){.invert{filter:invert(1)}}
+.about{display:grid;gap:20px;max-width:68ch;color:var(--muted);font-size:1.05rem}
+.about p{margin:0}
+.about strong{color:var(--text)}
+.contact-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px 28px;text-align:center}
+.contact-box p{color:var(--muted);max-width:50ch;margin:0 auto 24px}
+footer{border-top:1px solid var(--border);text-align:center;padding:28px 24px;color:var(--muted);font-size:.88rem}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header><nav>
+<a class="logo" href="#inicio">Álvaro<span>.</span>dev</a>
+<ul>
+<li><a href="#sobre-mi">Sobre mí</a></li>
+<li><a href="#formacion">Formación</a></li>
+<li><a href="#habilidades">Habilidades</a></li>
+<li><a href="#proyectos">Proyectos</a></li>
+<li><a href="#contacto">Contacto</a></li>
+</ul>
+</nav></header>
+
+<main>
+<section id="inicio" class="hero">
+<div>
+<span class="eyebrow">Ingeniería Informática</span>
+<h1>Hola, soy <em>Álvaro García Díaz</em></h1>
+<p class="lead">Estudiante de Ingeniería Informática, apasionado de la tecnología y el mundo del hardware.</p>
+<a class="btn primary" href="#proyectos">Ver proyectos</a>
+<a class="btn" href="#contacto">Contáctame</a>
+</div>
+<div class="avatar" aria-hidden="true">AG</div>
+</section>
+
+<section id="sobre-mi">
+<span class="eyebrow">Sobre mí</span>
+<h2>Entender la tecnología de abajo arriba</h2>
+<div class="about">
+<p>Soy <strong>estudiante de Ingeniería Informática</strong> y me apasiona la tecnología, sobre todo el mundo del <strong>hardware</strong> y la <strong>inteligencia artificial</strong>. Me interesa entender cómo funcionan los sistemas desde el nivel más bajo hasta el software que corre encima, y cómo la IA está cambiando la forma de desarrollar y usar la tecnología.</p>
+<p>Estoy en plena etapa de formación, aprendiendo y construyendo una base sólida con la que afrontar proyectos cada vez más ambiciosos.</p>
+</div>
+</section>
+
+<section id="formacion">
+<span class="eyebrow">Formación</span>
+<h2>Estudios</h2>
+<div class="grid">
+<div class="card"><div class="meta">2025 – Actualidad</div><h3>Grado en Ingeniería Informática</h3><p>Universidad Pablo de Olavide</p></div>
+</div>
+</section>
+
+<section id="habilidades">
+<span class="eyebrow">Habilidades</span>
+<h2>Tecnologías</h2>
+
+<div class="group"><h3>Lenguajes</h3>
+<ul class="chips">
+<li><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.16.0/icons/python/python-original.svg" alt="" loading="lazy">Python</li>
+<li><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.16.0/icons/javascript/javascript-original.svg" alt="" loading="lazy">JavaScript</li>
+<li><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.16.0/icons/java/java-original.svg" alt="" loading="lazy">Java</li>
+<li><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.16.0/icons/c/c-original.svg" alt="" loading="lazy">C</li>
+<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><path d="M9 3v3M12 3v3M15 3v3M9 18v3M12 18v3M15 18v3M3 9h3M3 12h3M3 15h3M18 9h3M18 12h3M18 15h3"/></svg>Ensamblador (ARM)</li>
+</ul></div>
+
+<div class="group"><h3>Herramientas</h3>
+<ul class="chips">
+<li><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.16.0/icons/git/git-original.svg" alt="" loading="lazy">Git</li>
+<li><img class="invert" src="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.16.0/icons/github/github-original.svg" alt="" loading="lazy">GitHub</li>
+<li><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.16.0/icons/docker/docker-original.svg" alt="" loading="lazy">Docker</li>
+<li><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.16.0/icons/sourcetree/sourcetree-original.svg" alt="" loading="lazy">SourceTree</li>
+</ul></div>
+
+<div class="group"><h3>Entornos de desarrollo</h3>
+<ul class="chips">
+<li><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.16.0/icons/vscode/vscode-original.svg" alt="" loading="lazy">VS Code</li>
+<li><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.16.0/icons/intellij/intellij-original.svg" alt="" loading="lazy">IntelliJ IDEA</li>
+<li><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.16.0/icons/netbeans/netbeans-original.svg" alt="" loading="lazy">NetBeans</li>
+</ul></div>
+</section>
+
+<section id="proyectos">
+<span class="eyebrow">Proyectos</span>
+<h2>Lo que he construido</h2>
+<div class="grid">
+<div class="card"><div class="meta">Práctica de clase</div><h3>Elecciones al Parlamento de Andalucía</h3><p>Programa en Java que gestiona partidos, candidaturas, provincias y mesas electorales. Pruébalo en el navegador o mira el código.</p><div class="tags"><span class="tag">Java</span><span class="tag">POO</span></div><div class="actions"><a class="btn primary sm" href="elecciones.html">Probar demo</a><a class="btn sm" href="https://github.com/alvarogarciadiaz/gestion-elecciones-java">Ver código</a></div></div>
+<div class="card ghost"><div class="meta">Próximamente</div><h3>Nuevo proyecto en camino</h3><p>Aquí irá mi próximo proyecto personal.</p></div>
+</div>
+</section>
+
+<section id="contacto">
+<span class="eyebrow">Contacto</span>
+<div class="contact-box">
+<h2>¿Hablamos?</h2>
+<p>Si quieres ponerte en contacto conmigo, escríbeme y te responderé lo antes posible.</p>
+<a class="btn primary" href="mailto:alvarogrcdzcontact@gmail.com">alvarogrcdzcontact@gmail.com</a>
+<a class="btn" href="https://github.com/alvarogarciadiaz">GitHub</a>
+</div>
+</section>
+</main>
+
+<footer>© 2026 Álvaro García Díaz. Todos los derechos reservados.</footer>
+</body>
+</html>

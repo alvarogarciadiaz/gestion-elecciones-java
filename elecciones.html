@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Demo interactiva de una práctica en Java: sistema de elecciones al Parlamento de Andalucía.">
+<title>Elecciones al Parlamento de Andalucía · Álvaro García Díaz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fafafb;--surface:#ffffff;--text:#0f172a;--muted:#5b6478;--accent:#2563eb;--accent2:#06b6d4;--accent-text:#ffffff;--border:#e5e7ee;--glow:rgba(37,99,235,.12);--warn:#b45309;--c-k:#7c3aed;--c-s:#047857;--c-c:#6b7280;--c-n:#b45309;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#0b0f1a;--surface:#131a2b;--text:#e8ecf6;--muted:#98a2b8;--accent:#60a5fa;--accent2:#22d3ee;--accent-text:#0b0f1a;--border:#222c45;--glow:rgba(96,165,250,.14);--warn:#fbbf24;--c-k:#c4b5fd;--c-s:#6ee7b7;--c-c:#8b95ad;--c-n:#fbbf24;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 "Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.top{max-width:1100px;margin:auto;padding:20px 24px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+.top a{color:var(--muted);text-decoration:none;font-weight:500;font-size:.95rem}
+.top a:hover{color:var(--accent)}
+main{max-width:1100px;margin:auto;padding:0 24px 72px}
+h1{font-size:clamp(1.9rem,5vw,3rem);line-height:1.1;letter-spacing:-.03em;margin:24px 0 12px}
+h2{font-size:1.5rem;letter-spacing:-.02em;margin:0 0 6px}
+.lead{color:var(--muted);max-width:62ch;margin:0 0 8px;font-size:1.05rem}
+.note{color:var(--muted);font-size:.9rem;max-width:70ch;margin:0 0 32px}
+.app{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:860px){.app{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:18px;border-bottom:1px solid var(--border)}
+.tab{background:none;border:0;border-bottom:2px solid transparent;padding:8px 12px;font:inherit;font-weight:600;font-size:.92rem;color:var(--muted);cursor:pointer;margin-bottom:-1px}
+.tab[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+label{display:block;font-size:.82rem;font-weight:600;color:var(--muted);margin-bottom:4px}
+input,select{width:100%;font:inherit;font-size:.93rem;padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text)}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:12px}
+button.btn{font:inherit;font-weight:600;font-size:.9rem;padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer}
+button.btn:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-text)}
+button.link{background:none;border:0;color:var(--muted);font:inherit;font-size:.82rem;cursor:pointer;text-decoration:underline;padding:0}
+button.link:hover{color:var(--accent)}
+.list{list-style:none;margin:20px 0 0;padding:0;display:grid;gap:8px}
+.list li{display:flex;justify-content:space-between;gap:12px;align-items:center;border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:.92rem}
+.list .sub{display:block;color:var(--muted);font-size:.82rem}
+.empty{color:var(--muted);font-size:.9rem;margin:16px 0 0}
+.group-title{font-size:.95rem;font-weight:700;margin:20px 0 8px}
+.sum{display:flex;gap:6px;align-items:center}
+.sum input{width:92px;padding:5px 8px;font-size:.85rem}
+.sum button{padding:5px 10px;font-size:.82rem}
+.console{background:#0b1020;color:#d6e2ff;border-radius:14px;overflow:hidden;position:sticky;top:12px;border:1px solid #1d2745}
+@media (max-width:860px){.console{position:static}}
+.console header{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#121a33;color:#8b9bc7;font-size:.8rem;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.dot{width:10px;height:10px;border-radius:50%;background:#33406b}
+pre{margin:0;font:13px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+#out{padding:14px;max-height:520px;overflow:auto;white-space:pre-wrap;word-break:break-word}
+#out .h{color:#67e8f9;font-weight:600}
+#avisos{border-top:1px solid #1d2745;padding:10px 14px;font-size:.82rem;color:#fbbf24;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;min-height:46px}
+#avisos div+div{margin-top:4px}
+#avisos .ok{color:#86efac}
+#avisos .vacio{color:#6b7aa8}
+.code{margin-top:56px}
+.files{display:flex;gap:4px;flex-wrap:wrap;margin:16px 0 0}
+.files .tab{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.82rem}
+.codebox{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;overflow:auto;max-height:560px;margin-top:-1px}
+.codebox pre{font-size:13px;color:var(--text)}
+.codebox .k{color:var(--c-k);font-weight:600}.codebox .s{color:var(--c-s)}.codebox .c{color:var(--c-c);font-style:italic}.codebox .n{color:var(--c-n)}
+.gh{display:inline-block;margin-top:16px;font-weight:600}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="top"><a href="index.html">← Volver al portfolio</a><a href="https://github.com/alvarogarciadiaz/gestion-elecciones-java">Ver el repositorio en GitHub</a></div>
+
+<main>
+<h1>Elecciones al Parlamento de Andalucía</h1>
+<p class="lead">Práctica de clase en Java, con una versión web para probarla. Añade partidos, provincias, candidaturas y mesas electorales, y mira cómo responde el programa.</p>
+<p class="note">La lógica es la misma que en el código Java (límites, validaciones y formato de salida), traducida a JavaScript para que funcione en el navegador. Más abajo tienes el código Java original.</p>
+
+<div class="app">
+<div class="panel">
+<div class="bar">
+<button class="btn primary" id="btn-ejemplo" type="button">Cargar datos de ejemplo</button>
+<button class="btn" id="btn-vaciar" type="button">Vaciar todo</button>
+</div>
+
+<div class="tabs" role="tablist" id="tabs">
+<button class="tab" role="tab" data-tab="partidos" aria-selected="true">Partidos</button>
+<button class="tab" role="tab" data-tab="provincias" aria-selected="false">Provincias</button>
+<button class="tab" role="tab" data-tab="candidaturas" aria-selected="false">Candidaturas</button>
+<button class="tab" role="tab" data-tab="mesas" aria-selected="false">Mesas</button>
+</div>
+
+<div data-panel="partidos">
+<form id="f-partido">
+<div class="row">
+<div><label for="p-nombre">Nombre</label><input id="p-nombre" name="nombre" required maxlength="60"></div>
+<div><label for="p-siglas">Siglas</label><input id="p-siglas" name="siglas" required maxlength="8"></div>
+<div><label for="p-ideo">Ideología</label><input id="p-ideo" name="ideologia" maxlength="40"></div>
+</div>
+<button class="btn primary" type="submit">Añadir partido</button>
+</form>
+<ul class="list" id="l-partidos"></ul>
+</div>
+
+<div data-panel="provincias" hidden>
+<form id="f-provincia">
+<div class="row">
+<div><label for="v-nombre">Provincia</label><input id="v-nombre" name="nombre" required maxlength="40"></div>
+<div><label for="v-esc">Número de escaños</label><input id="v-esc" name="escanos" type="number" required step="1"></div>
+</div>
+<button class="btn primary" type="submit">Añadir provincia</button>
+</form>
+<ul class="list" id="l-provincias"></ul>
+</div>
+
+<div data-panel="candidaturas" hidden>
+<form id="f-cand">
+<div class="row">
+<div><label for="c-prov">Provincia</label><select id="c-prov" name="prov"></select></div>
+<div><label for="c-part">Partido</label><select id="c-part" name="part"></select></div>
+</div>
+<div class="row">
+<div><label for="c-nombre">Nombre</label><input id="c-nombre" name="nombre" required maxlength="60"></div>
+<div><label for="c-dni">DNI</label><input id="c-dni" name="dni" required maxlength="12"></div>
+<div><label for="c-edad">Edad</label><input id="c-edad" name="edad" type="number" required step="1"></div>
+</div>
+<div class="row">
+<div><label for="c-votos">Votos</label><input id="c-votos" name="votos" type="number" required step="1" value="0"></div>
+<div><label for="c-esc">Escaños</label><input id="c-esc" name="escanos" type="number" required step="1" value="0"></div>
+</div>
+<button class="btn primary" type="submit">Añadir candidatura</button>
+<p class="empty" id="c-aviso" hidden>Primero crea al menos una provincia y un partido.</p>
+</form>
+<div id="l-cands"></div>
+</div>
+
+<div data-panel="mesas" hidden>
+<form id="f-mesa">
+<div class="row">
+<div><label for="m-cod">Código</label><input id="m-cod" name="codigo" required maxlength="20"></div>
+<div><label for="m-mun">Municipio</label><input id="m-mun" name="municipio" required maxlength="40"></div>
+</div>
+<div class="row">
+<div><label for="m-censo">Censo</label><input id="m-censo" name="censo" type="number" required step="1"></div>
+<div><label for="m-part">Participación</label><input id="m-part" name="participacion" type="number" required step="1"></div>
+</div>
+<button class="btn primary" type="submit">Añadir mesa</button>
+</form>
+<ul class="list" id="l-mesas"></ul>
+</div>
+</div>
+
+<div class="console" aria-live="polite">
+<header><span class="dot"></span><span class="dot"></span><span class="dot"></span><span>Salida de Principal.java</span></header>
+<pre id="out"></pre>
+<div id="avisos"></div>
+</div>
+</div>
+
+<section class="code">
+<h2>Código Java</h2>
+<p class="lead">Las ocho clases de la práctica. Este es el código que se ejecuta en Java; la demo de arriba reproduce su comportamiento.</p>
+<div class="files" id="files" role="tablist"></div>
+<div class="codebox"><pre id="codigo"></pre></div>
+<a class="gh" href="https://github.com/alvarogarciadiaz/gestion-elecciones-java">Ver el repositorio completo en GitHub</a>
+</section>
+</main>
+
+<script>
+const FILES = {"Principal.java": "package elecciones;\n\nimport java.util.Arrays;\n\n/** Programa principal: crea partidos, candidaturas, provincias y mesas, y muestra el sistema. */\npublic class Principal {\n\n    public static void main(String[] args) {\n        Partido p1 = new Partido(\"Partido Verde Andaluz\");\n        p1.setSiglas(\"PVA\");\n        p1.setIdeologia(\"Ecologista\");\n\n        Partido p2 = new Partido(\"Union Social Andaluza\");\n        p2.setSiglas(\"USA\");\n        p2.setIdeologia(\"Socialdemocrata\");\n\n        Partido p3 = new Partido(\"Alternativa Ciudadana\");\n        p3.setSiglas(\"AC\");\n        p3.setIdeologia(\"Centrista\");\n\n        Partido[] partidos = {p1, p2, p3, new Partido(p1)};\n        partidos[3].setSiglas(\"PVB\");\n        Arrays.sort(partidos);\n\n        System.out.println(\"PARTIDOS ORDENADOS:\");\n        for (int i = 0; i < partidos.length; i++) {\n            System.out.println(partidos[i]);\n        }\n        System.out.println();\n\n        Candidatura c1 = new Candidatura(\"María López\", \"12345678a\", 45,\n                p1.getNombre(), p1.getSiglas(), 120000, 5);\n        Candidatura c2 = new Candidatura(\"Juan Pérez\", \"22345678b\", 51,\n                p2.getNombre(), p2.getSiglas(), 110200, 4);\n        Candidatura c3 = new Candidatura(\"Ana Romero\", \"33445566c\", 39,\n                p3.getNombre(), p3.getSiglas(), 84500, 3);\n\n        c1.sumarVotos(5430);\n\n        Provincia sevilla = new Provincia(\"Sevilla\", 18, 5);\n        Provincia granada = new Provincia(\"Granada\", 13, 5);\n        Provincia cadiz = new Provincia(\"Cadiz\", 15, 5);\n\n        sevilla.añadirCandidatura(c1);\n        sevilla.añadirCandidatura(c2);\n        granada.añadirCandidatura(c3);\n\n        MesaElectoral m1 = new MesaElectoral(\"SE-41001-001\", \"Sevilla\", 800, 612);\n        MesaElectoral m2 = new MesaElectoral(\"GR-18087-002\", \"Granada\", 720, 544);\n        MesaElectoral m3 = new MesaElectoral(\"CA-11012-003\", \"Jerez de la Frontera\", 750, 590);\n\n        SistemaElecciones sistema = new SistemaElecciones(8, 20);\n        sistema.añadirProvincia(sevilla);\n        sistema.añadirProvincia(granada);\n        sistema.añadirProvincia(cadiz);\n        sistema.añadirMesa(m1);\n        sistema.añadirMesa(m2);\n        sistema.añadirMesa(m3);\n\n        sistema.mostrarSistema();\n    }\n}\n", "SistemaElecciones.java": "package elecciones;\n\n/** Sistema que reúne las provincias y las mesas electorales. */\npublic class SistemaElecciones {\n\n    private Provincia[] provincias;\n    private MesaElectoral[] mesas;\n    private int contadorProvincias;\n    private int contadorMesas;\n\n    public SistemaElecciones(int maxProvincias, int maxMesas) {\n        this.provincias = new Provincia[maxProvincias];\n        this.mesas = new MesaElectoral[maxMesas];\n    }\n\n    public void añadirProvincia(Provincia p) {\n        if (contadorProvincias < provincias.length) {\n            provincias[contadorProvincias] = p;\n            contadorProvincias++;\n        } else {\n            System.out.println(\"No hay espacio para añadir otra provincia\");\n        }\n    }\n\n    public void añadirMesa(MesaElectoral m) {\n        if (contadorMesas < mesas.length) {\n            mesas[contadorMesas] = m;\n            contadorMesas++;\n        } else {\n            System.out.println(\"No hay espacio para añadir otra mesa electoral\");\n        }\n    }\n\n    public void mostrarSistema() {\n\n        System.out.println(\"=== SISTEMA DE ELECCIONES AL PARLAMENTO DE ANDALUCÍA ===\\n\");\n\n        System.out.println(\"PROVINCIAS REGISTRADAS:\");\n        for (int i = 0; i < contadorProvincias; i++) {\n            System.out.println(provincias[i].toString());\n        }\n\n        System.out.println(\"MESAS ELECTORALES REGISTRADAS:\");\n        for (int i = 0; i < contadorMesas; i++) {\n            System.out.println(mesas[i].toString());\n        }\n    }\n}\n", "Provincia.java": "package elecciones;\n\n/** Provincia con un número de escaños y un máximo de candidaturas registradas. */\npublic class Provincia {\n\n    private String nombre;\n    private int numEscanos;\n    private Candidatura[] candidaturas;\n    private int contadorCandidaturas;\n\n    // Constructor importante porque aqui no controlamos las condiciones en los setters\n    public Provincia(String nombre, int numEscanos, int maxCandidaturas) {\n        this.nombre = nombre.toUpperCase();\n        this.numEscanos = numEscanos;\n        this.candidaturas = new Candidatura[maxCandidaturas]; // Vector con el tamaño máximo que nos dicen\n        this.contadorCandidaturas = 0;\n    }\n\n    public String getNombre() {\n        return nombre;\n    }\n\n    public int getNumEscanos() {\n        return numEscanos;\n    }\n\n    public void añadirCandidatura(Candidatura c) {\n        if (contadorCandidaturas < candidaturas.length) {\n            candidaturas[contadorCandidaturas] = c;\n            contadorCandidaturas++;\n        } else {\n            System.out.println(\"No hay suficiente espacio para añadir la candidatura\");\n        }\n    }\n\n    public String toString() {\n        String cadena = \"\";\n        cadena += \"- PROVINCIA: \" + nombre + \" <\" + numEscanos + \" escaños>\\n\";\n        if (contadorCandidaturas == 0) {\n            cadena += \"<Aún no hay candidaturas registradas en esta provincia>\\n\";\n        } else {\n            for (int i = 0; i < contadorCandidaturas; i++) {\n\n                Candidatura candidatura = candidaturas[i];\n\n                cadena += \"-> CANDIDATURA: \" + candidatura.getNombre() + \" (\" + candidatura.getDni() + \") - \" + candidatura.getEdad() + \" años\\n ---> Partido: \" + candidatura.getPartido() + \"\\n ---> Votos: \" + candidatura.getVotos() + \"\\n\";\n            }\n        }\n        return cadena;\n    }\n}\n", "Candidatura.java": "package elecciones;\n\n/** Candidatura de una persona por un partido, con sus votos y escaños. */\npublic class Candidatura extends Persona implements Votable {\n\n    private String partido;\n    private String siglas;\n    private int votos;\n    private int escanos;\n\n    public Candidatura(String nombre, String dni, int edad, String partido, String siglas, int votos, int escanos) {\n        super(nombre, dni, edad);\n        setPartido(partido);\n        setSiglas(siglas);\n        setVotos(votos);\n        setEscanos(escanos);\n    }\n\n    public String getPartido() {\n        return partido;\n    }\n\n    public void setPartido(String partido) {\n        this.partido = partido.toUpperCase();\n    }\n\n    public String getSiglas() {\n        return siglas;\n    }\n\n    public void setSiglas(String siglas) {\n        this.siglas = siglas.toUpperCase();\n    }\n\n    public int getVotos() {\n        return votos;\n    }\n\n    public void setVotos(int votos) {\n        if (votos >= 0 && votos <= MAXVOTOS) {\n            this.votos = votos;\n        }\n    }\n\n    public int getEscanos() {\n        return escanos;\n    }\n\n    public void setEscanos(int escanos) {\n        if (escanos >= 0) {\n            this.escanos = escanos;\n        }\n    }\n\n    public void sumarVotos(int cantidad) {\n        if (cantidad > 0 && (votos + cantidad) <= MAXVOTOS) {\n            votos += cantidad;\n        }\n    }\n\n    public String toString() {\n        return \"- CANDIDATURA: \" + super.toString() + \"\\n\" + \"-- Partido: \" + partido + \"\\n\" + \"-- Siglas: \" + siglas + \"\\n\" + \"-- Votos: \" + votos + \"\\n\" + \"-- Escaños: \" + escanos;\n    }\n}\n", "Persona.java": "package elecciones;\n\n/** Persona genérica con nombre, DNI y edad. */\npublic abstract class Persona {\n\n    private String nombre;\n    private String dni;\n    private int edad;\n\n    public Persona(String nombre, String dni, int edad) {\n        this.nombre = nombre;\n        setDni(dni);\n        setEdad(edad);\n    }\n\n    public String getNombre() {\n        return nombre;\n    }\n\n    public void setNombre(String nombre) {\n        this.nombre = nombre;\n    }\n\n    public String getDni() {\n        return dni;\n    }\n\n    public void setDni(String dni) {\n        this.dni = dni.toUpperCase();\n    }\n\n    public int getEdad() {\n        return edad;\n    }\n\n    public void setEdad(int edad) {\n        if (edad > 0) {\n            this.edad = edad;\n        }\n    }\n\n    public String toString() {\n        String cadena = \"\";\n        cadena += nombre + \" (\" + dni + \") - \" + edad + \" años\";\n        return cadena;\n    }\n}\n", "Votable.java": "package elecciones;\n\n/** Contrato de todo lo que puede recibir votos. */\npublic interface Votable {\n\n    public static final int MAXVOTOS = 5000000;\n\n    public String getNombre();\n    public int getVotos();\n}\n", "Partido.java": "package elecciones;\n\n/** Partido político. Se ordena por siglas y, si empatan, por nombre. */\npublic class Partido implements Comparable {\n\n    private String nombre;\n    private String siglas;\n    private String ideologia;\n\n    public Partido(String nombre) {\n        setNombre(nombre);\n    }\n\n    public Partido(Partido p) {\n        this.nombre = p.nombre;\n        this.siglas = p.siglas;\n        this.ideologia = p.ideologia;\n    }\n\n    public String getNombre() {\n        return nombre;\n    }\n\n    public void setNombre(String nombre) {\n        this.nombre = nombre.toUpperCase();\n    }\n\n    public String getSiglas() {\n        return siglas;\n    }\n\n    public void setSiglas(String siglas) {\n        this.siglas = siglas.toUpperCase();\n    }\n\n    public String getIdeologia() {\n        return ideologia;\n    }\n\n    public void setIdeologia(String ideologia) {\n        this.ideologia = ideologia.toUpperCase();\n    }\n\n    public boolean equals(Object objeto) {\n        boolean resultado = false;\n        if (objeto instanceof Partido) {\n            Partido p = (Partido) objeto;\n            resultado = (nombre.equalsIgnoreCase(p.nombre)) && (siglas.equalsIgnoreCase(p.siglas));\n        }\n        return resultado;\n    }\n\n    public int compareTo(Object o) {\n        Partido p = (Partido) o;\n        int cmp = this.siglas.compareToIgnoreCase(p.siglas);\n        if (cmp == 0) {                                       // En caso de empate en las siglas, comparamos por los nombres\n            cmp = this.nombre.compareToIgnoreCase(p.nombre);  // <0 this antes, 0 iguales, >0 this despues\n        }\n        return cmp;\n    }\n\n    public String toString() {\n        return siglas + \" - \" + nombre;\n    }\n}\n", "MesaElectoral.java": "package elecciones;\n\n/** Mesa electoral de un municipio, con su censo y la participación registrada. */\npublic class MesaElectoral {\n\n    private String codigo;\n    private String municipio;\n    private int censo;\n    private int participacion;\n\n    public MesaElectoral(String codigo, String municipio, int censo, int participacion) {\n        setCodigo(codigo);\n        setMunicipio(municipio);\n        setCenso(censo);\n        setParticipacion(participacion);\n    }\n\n    public String getCodigo() {\n        return codigo;\n    }\n\n    public void setCodigo(String codigo) {\n        this.codigo = codigo.toUpperCase();\n    }\n\n    public String getMunicipio() {\n        return municipio;\n    }\n\n    public void setMunicipio(String municipio) {\n        this.municipio = municipio.toUpperCase();\n    }\n\n    public int getCenso() {\n        return censo;\n    }\n\n    public void setCenso(int censo) {\n        if (censo > 0) {\n            this.censo = censo;\n        }\n    }\n\n    public int getParticipacion() {\n        return participacion;\n    }\n\n    public void setParticipacion(int participacion) {\n        if (participacion >= 0 && participacion <= censo) {\n            this.participacion = participacion;\n        }\n    }\n\n    public String toString() {\n        return \"MESA: \" + codigo + \" <\" + municipio + \"> Censo: \" + censo + \", Participación: \" + participacion;\n    }\n}\n"};
+
+/* ===== Lógica (misma que en el código Java) ===== */
+const MAXVOTOS = 5000000, MAX_CAND = 5, MAX_PROV = 8, MAX_MESAS = 20;
+const up = s => String(s).toUpperCase();
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const state = { partidos: [], provincias: [], mesas: [], avisos: [] };
+
+function aviso(texto, tipo) {
+  state.avisos.unshift({ texto, tipo: tipo || 'warn' });
+  state.avisos = state.avisos.slice(0, 5);
+}
+
+function crearPartido(nombre, siglas, ideologia) {
+  return { nombre: up(nombre), siglas: up(siglas), ideologia: up(ideologia || '') };
+}
+
+function compararPartidos(a, b) {            // Partido.compareTo
+  const sa = a.siglas.toLowerCase(), sb = b.siglas.toLowerCase();
+  if (sa !== sb) return sa < sb ? -1 : 1;
+  const na = a.nombre.toLowerCase(), nb = b.nombre.toLowerCase();
+  return na < nb ? -1 : na > nb ? 1 : 0;
+}
+
+function crearCandidatura(nombre, dni, edad, partido, siglas, votos, escanos) {
+  const c = { nombre, dni: up(dni), edad: 0, partido: up(partido), siglas: up(siglas), votos: 0, escanos: 0 };
+  if (edad > 0) c.edad = edad; else aviso('setEdad: la edad debe ser mayor que 0. Se queda en 0.');
+  if (votos >= 0 && votos <= MAXVOTOS) c.votos = votos; else aviso('setVotos: los votos deben estar entre 0 y ' + MAXVOTOS.toLocaleString('es-ES') + '. Se quedan en 0.');
+  if (escanos >= 0) c.escanos = escanos; else aviso('setEscanos: los escaños no pueden ser negativos. Se quedan en 0.');
+  return c;
+}
+
+function sumarVotos(c, cantidad) {            // Candidatura.sumarVotos
+  if (cantidad > 0 && c.votos + cantidad <= MAXVOTOS) {
+    c.votos += cantidad;
+    aviso('Se suman ' + cantidad + ' votos a ' + c.nombre + '.', 'ok');
+  } else {
+    aviso('sumarVotos: no se suman (la cantidad debe ser mayor que 0 y el total no puede pasar de ' + MAXVOTOS.toLocaleString('es-ES') + ').');
+  }
+}
+
+function crearMesa(codigo, municipio, censo, participacion) {
+  const m = { codigo: up(codigo), municipio: up(municipio), censo: 0, participacion: 0 };
+  if (censo > 0) m.censo = censo; else aviso('setCenso: el censo debe ser mayor que 0. Se queda en 0.');
+  if (participacion >= 0 && participacion <= m.censo) m.participacion = participacion;
+  else aviso('setParticipacion: debe estar entre 0 y el censo. Se queda en 0.');
+  return m;
+}
+
+function añadirProvincia(p) {                  // SistemaElecciones.añadirProvincia
+  if (state.provincias.length < MAX_PROV) { state.provincias.push(p); return true; }
+  aviso('No hay espacio para añadir otra provincia'); return false;
+}
+function añadirMesa(m) {                       // SistemaElecciones.añadirMesa
+  if (state.mesas.length < MAX_MESAS) { state.mesas.push(m); return true; }
+  aviso('No hay espacio para añadir otra mesa electoral'); return false;
+}
+function añadirCandidatura(p, c) {             // Provincia.añadirCandidatura
+  if (p.cands.length < MAX_CAND) { p.cands.push(c); return true; }
+  aviso('No hay suficiente espacio para añadir la candidatura'); return false;
+}
+
+function provinciaToString(p) {
+  let s = '- PROVINCIA: ' + p.nombre + ' <' + p.escanos + ' escaños>\n';
+  if (p.cands.length === 0) s += '<Aún no hay candidaturas registradas en esta provincia>\n';
+  else p.cands.forEach(c => {
+    s += '-> CANDIDATURA: ' + c.nombre + ' (' + c.dni + ') - ' + c.edad + ' años\n ---> Partido: ' + c.partido + '\n ---> Votos: ' + c.votos + '\n';
+  });
+  return s;
+}
+
+function salidaConsola() {
+  let o = 'PARTIDOS ORDENADOS:\n';
+  [...state.partidos].sort(compararPartidos).forEach(p => { o += p.siglas + ' - ' + p.nombre + '\n'; });
+  o += '\n=== SISTEMA DE ELECCIONES AL PARLAMENTO DE ANDALUCÍA ===\n\n';
+  o += 'PROVINCIAS REGISTRADAS:\n';
+  state.provincias.forEach(p => { o += provinciaToString(p) + '\n'; });
+  o += 'MESAS ELECTORALES REGISTRADAS:\n';
+  state.mesas.forEach(m => { o += 'MESA: ' + m.codigo + ' <' + m.municipio + '> Censo: ' + m.censo + ', Participación: ' + m.participacion + '\n'; });
+  return o;
+}
+
+/* ===== Interfaz ===== */
+const $ = id => document.getElementById(id);
+
+function render() {
+  $('out').innerHTML = esc(salidaConsola()).split('\n').map(l =>
+    /^(PARTIDOS ORDENADOS:|PROVINCIAS REGISTRADAS:|MESAS ELECTORALES REGISTRADAS:|===)/.test(l) ? '<span class="h">' + l + '</span>' : l
+  ).join('\n');
+
+  $('avisos').innerHTML = state.avisos.length
+    ? state.avisos.map(a => '<div class="' + (a.tipo === 'ok' ? 'ok' : '') + '">' + (a.tipo === 'ok' ? '✓ ' : '! ') + esc(a.texto) + '</div>').join('')
+    : '<div class="vacio">Los avisos del programa aparecerán aquí.</div>';
+
+  $('l-partidos').innerHTML = state.partidos.length ? state.partidos.map((p, i) =>
+    '<li><span>' + esc(p.siglas) + ' - ' + esc(p.nombre) + (p.ideologia ? '<span class="sub">' + esc(p.ideologia) + '</span>' : '') + '</span><button class="link" data-del="partido" data-i="' + i + '">Quitar</button></li>'
+  ).join('') : '<p class="empty">Aún no hay partidos.</p>';
+
+  $('l-provincias').innerHTML = state.provincias.length ? state.provincias.map((p, i) =>
+    '<li><span>' + esc(p.nombre) + '<span class="sub">' + p.escanos + ' escaños · ' + p.cands.length + ' de ' + MAX_CAND + ' candidaturas</span></span><button class="link" data-del="provincia" data-i="' + i + '">Quitar</button></li>'
+  ).join('') : '<p class="empty">Aún no hay provincias (máximo ' + MAX_PROV + ').</p>';
+
+  $('l-mesas').innerHTML = state.mesas.length ? state.mesas.map((m, i) =>
+    '<li><span>' + esc(m.codigo) + ' · ' + esc(m.municipio) + '<span class="sub">Censo ' + m.censo + ' · Participación ' + m.participacion + '</span></span><button class="link" data-del="mesa" data-i="' + i + '">Quitar</button></li>'
+  ).join('') : '<p class="empty">Aún no hay mesas (máximo ' + MAX_MESAS + ').</p>';
+
+  const selProv = $('c-prov'), selPart = $('c-part');
+  const vp = selProv.value, vt = selPart.value;
+  selProv.innerHTML = state.provincias.map((p, i) => '<option value="' + i + '">' + esc(p.nombre) + '</option>').join('');
+  selPart.innerHTML = state.partidos.map((p, i) => '<option value="' + i + '">' + esc(p.siglas) + ' - ' + esc(p.nombre) + '</option>').join('');
+  if (vp && selProv.querySelector('option[value="' + vp + '"]')) selProv.value = vp;
+  if (vt && selPart.querySelector('option[value="' + vt + '"]')) selPart.value = vt;
+  $('c-aviso').hidden = state.provincias.length > 0 && state.partidos.length > 0;
+
+  const grupos = state.provincias.map((p, pi) => p.cands.length ?
+    '<div class="group-title">' + esc(p.nombre) + '</div><ul class="list" style="margin-top:0">' + p.cands.map((c, ci) =>
+      '<li><span>' + esc(c.nombre) + '<span class="sub">' + esc(c.siglas) + ' · ' + c.votos.toLocaleString('es-ES') + ' votos · ' + c.escanos + ' escaños</span></span>' +
+      '<span class="sum"><input type="number" step="1" placeholder="+ votos" aria-label="Votos a sumar a ' + esc(c.nombre) + '" data-sum="' + pi + '-' + ci + '"><button class="btn" data-sumar="' + pi + '-' + ci + '">Sumar</button></span></li>'
+    ).join('') + '</ul>' : '').join('');
+  $('l-cands').innerHTML = grupos || '<p class="empty">Aún no hay candidaturas.</p>';
+}
+
+function vaciar() { state.partidos = []; state.provincias = []; state.mesas = []; state.avisos = []; }
+
+function cargarEjemplo() {                      // Reproduce Principal.main
+  vaciar();
+  state.partidos.push(
+    crearPartido('Partido Verde Andaluz', 'PVA', 'Ecologista'),
+    crearPartido('Union Social Andaluza', 'USA', 'Socialdemocrata'),
+    crearPartido('Alternativa Ciudadana', 'AC', 'Centrista'),
+    crearPartido('Partido Verde Andaluz', 'PVB', 'Ecologista')
+  );
+  const mk = (n, e) => ({ nombre: up(n), escanos: e, cands: [] });
+  const sevilla = mk('Sevilla', 18), granada = mk('Granada', 13), cadiz = mk('Cadiz', 15);
+  const c1 = crearCandidatura('María López', '12345678a', 45, 'Partido Verde Andaluz', 'PVA', 120000, 5);
+  const c2 = crearCandidatura('Juan Pérez', '22345678b', 51, 'Union Social Andaluza', 'USA', 110200, 4);
+  const c3 = crearCandidatura('Ana Romero', '33445566c', 39, 'Alternativa Ciudadana', 'AC', 84500, 3);
+  sumarVotos(c1, 5430);
+  añadirCandidatura(sevilla, c1); añadirCandidatura(sevilla, c2); añadirCandidatura(granada, c3);
+  [sevilla, granada, cadiz].forEach(añadirProvincia);
+  añadirMesa(crearMesa('SE-41001-001', 'Sevilla', 800, 612));
+  añadirMesa(crearMesa('GR-18087-002', 'Granada', 720, 544));
+  añadirMesa(crearMesa('CA-11012-003', 'Jerez de la Frontera', 750, 590));
+  state.avisos = [];
+  render();
+}
+
+document.querySelectorAll('.tab[data-tab]').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.tab[data-tab]').forEach(t => t.setAttribute('aria-selected', t === b ? 'true' : 'false'));
+  document.querySelectorAll('[data-panel]').forEach(p => { p.hidden = p.dataset.panel !== b.dataset.tab; });
+}));
+
+$('btn-ejemplo').addEventListener('click', cargarEjemplo);
+$('btn-vaciar').addEventListener('click', () => { vaciar(); render(); });
+
+function enviar(id, fn) {
+  $(id).addEventListener('submit', e => {
+    e.preventDefault();
+    const f = new FormData(e.target);
+    if (fn(f) !== false) e.target.reset();
+    render();
+  });
+}
+
+enviar('f-partido', f => { state.partidos.push(crearPartido(f.get('nombre').trim(), f.get('siglas').trim(), f.get('ideologia').trim())); });
+enviar('f-provincia', f => { añadirProvincia({ nombre: up(f.get('nombre').trim()), escanos: parseInt(f.get('escanos'), 10), cands: [] }); });
+enviar('f-cand', f => {
+  const prov = state.provincias[f.get('prov')], part = state.partidos[f.get('part')];
+  if (!prov || !part) return false;
+  const c = crearCandidatura(f.get('nombre').trim(), f.get('dni').trim(), parseInt(f.get('edad'), 10), part.nombre, part.siglas, parseInt(f.get('votos'), 10), parseInt(f.get('escanos'), 10));
+  añadirCandidatura(prov, c);
+});
+enviar('f-mesa', f => { añadirMesa(crearMesa(f.get('codigo').trim(), f.get('municipio').trim(), parseInt(f.get('censo'), 10), parseInt(f.get('participacion'), 10))); });
+
+document.addEventListener('click', e => {
+  const del = e.target.closest('[data-del]');
+  if (del) {
+    const i = +del.dataset.i, k = del.dataset.del;
+    (k === 'partido' ? state.partidos : k === 'provincia' ? state.provincias : state.mesas).splice(i, 1);
+    render(); return;
+  }
+  const s = e.target.closest('[data-sumar]');
+  if (s) {
+    const [pi, ci] = s.dataset.sumar.split('-').map(Number);
+    const val = parseInt(document.querySelector('[data-sum="' + s.dataset.sumar + '"]').value, 10);
+    sumarVotos(state.provincias[pi].cands[ci], Number.isFinite(val) ? val : 0);
+    render();
+  }
+});
+
+/* ===== Visor de código ===== */
+function resaltar(src) {
+  const re = /(\/\*[\s\S]*?\*\/|\/\/[^\n]*)|("(?:\\.|[^"\\])*")|\b(package|import|public|private|protected|class|interface|abstract|extends|implements|static|final|void|int|boolean|String|new|return|if|else|for|super|this|instanceof|Object)\b|\b(\d+)\b/g;
+  let out = '', last = 0, m;
+  while ((m = re.exec(src))) {
+    out += esc(src.slice(last, m.index));
+    out += '<span class="' + (m[1] ? 'c' : m[2] ? 's' : m[3] ? 'k' : 'n') + '">' + esc(m[0]) + '</span>';
+    last = re.lastIndex;
+  }
+  return out + esc(src.slice(last));
+}
+const nombres = Object.keys(FILES);
+function mostrarArchivo(n) {
+  $('codigo').innerHTML = resaltar(FILES[n]);
+  document.querySelectorAll('#files .tab').forEach(t => t.setAttribute('aria-selected', t.dataset.file === n ? 'true' : 'false'));
+}
+$('files').innerHTML = nombres.map(n => '<button class="tab" role="tab" data-file="' + n + '" aria-selected="false">' + n + '</button>').join('');
+$('files').addEventListener('click', e => { const b = e.target.closest('[data-file]'); if (b) mostrarArchivo(b.dataset.file); });
+mostrarArchivo(nombres.includes('Principal.java') ? 'Principal.java' : nombres[0]);
+
+cargarEjemplo();
+</script>
+</body>
+</html>
